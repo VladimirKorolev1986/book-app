@@ -1109,34 +1109,79 @@
 
 	var onChange$1 = onChange;
 
+	class DivComponent {
+		constructor() {
+			this.el = document.createElement('div');
+		}
+
+		render(){
+			this.el;
+		}
+	}
+
+	class Header extends DivComponent {
+	  constructor(appState) {
+	    super();
+	    this.appState = appState;
+	  }
+
+	  render() {
+	    this.el.innerHTML = '';
+	    this.el.classList.add('header');
+	    this.el.innerHTML = `
+		<div>
+			<img src="/static/logo.svg" alt="Логотип"/>	
+		</div>
+		<div class="menu">
+			<a class="menu__item" href="#">
+				<img src="/static/search.svg" alt="Поиск иконка"/>	
+				Поиск книг
+			</a>
+				<a class="menu__item" href="#">
+				<img src="/static/favorites.svg" alt="Избранное иконка"/>	
+				Избранное
+				<div class="menu__counter">
+					${this.appState.favorites.length}
+				</div>
+			</a>
+		</div>
+	`;
+	    return this.el;
+	  }
+	}
+
 	class MainView extends AbstractView {
-		state = {
-			list: [],
-			loading: false,
-			searchQuery: undefined,
-			offset: 0
-		};
-		constructor(appState){
-			super();
-			this.appState = appState;
-			this.appState = onChange$1(this.appState, this.appStateHook.bind(this));
-			this.setTitle('Поиск книг');
-		}
+	  state = {
+	    list: [],
+	    loading: false,
+	    searchQuery: undefined,
+	    offset: 0,
+	  };
+	  constructor(appState) {
+	    super();
+	    this.appState = appState;
+	    this.appState = onChange$1(this.appState, this.appStateHook.bind(this));
+	    this.setTitle('Поиск книг');
+	  }
 
-		appStateHook(path) {
-			if (path == 'favorites') {
-				// this.render();
-				console.log(path);
-			}
-		}
+	  appStateHook(path) {
+	    if (path == 'favorites') {
+	      // this.render();
+	      console.log(path);
+	    }
+	  }
 
-		render () {
-			const main = document.createElement('div');
-			main.innerHTML = `Число книг: ${this.appState.favorites.length}`;
-			this.app.innerHTML = '';
-			this.app.append(main);
-			this.appState.favorites.push('d');
-		}
+	  render() {
+	    const main = document.createElement('div');
+	    this.app.innerHTML = '';
+	    this.app.append(main);
+	    this.renderHeader();
+	  }
+
+	  renderHeader() {
+	    const header = new Header(this.appState).render();
+	    this.app.prepend(header);
+	  }
 	}
 
 	class App{
