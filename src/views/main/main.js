@@ -1,6 +1,7 @@
 import { AbstractView } from '../../common/view.js';
 import onChange from 'on-change';
 import { Header } from '../../components/header/header.js';
+import { Search } from '../../components/search/search.js';
 
 export class MainView extends AbstractView {
   state = {
@@ -18,13 +19,13 @@ export class MainView extends AbstractView {
 
   appStateHook(path) {
     if (path == 'favorites') {
-      // this.render();
       console.log(path);
     }
   }
 
   render() {
     const main = document.createElement('div');
+    main.append(new Search(this.state).render());
     this.app.innerHTML = '';
     this.app.append(main);
     this.renderHeader();
