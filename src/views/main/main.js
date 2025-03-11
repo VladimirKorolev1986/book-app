@@ -2,23 +2,25 @@ import { AbstractView } from '../../common/view.js';
 import onChange from 'on-change';
 import { Header } from '../../components/header/header.js';
 import { Search } from '../../components/search/search.js';
+import { CardList } from '../../components/card-list/card-list.js';
 
 export class MainView extends AbstractView {
   state = {
-    list: [],
-    loading: false,
-    searchQuery: undefined,
-    offset: 0,
+    list: [], //список книг
+    loading: false, //флаг загрузки
+    searchQuery: undefined, //строка поиска
+    offset: 0, // смещение для пагинации
   };
   constructor(appState) {
     super();
     this.appState = appState;
-    this.appState = onChange(this.appState, this.appStateHook.bind(this));
-    this.state = onChange(this.state, this.stateHook.bind(this));
-    this.setTitle('Поиск книг');
+    this.appState = onChange(this.appState, this.appStateHook.bind(this)); // отслеживаем состояние appState
+    this.state = onChange(this.state, this.stateHook.bind(this)); // отслеживаем состояние state
+    this.setTitle('Поиск книг'); // устанавливаем заголовок
   }
 
   appStateHook(path) {
+    // вызывается при изменении appState
     if (path == 'favorites') {
       console.log(path);
     }
@@ -34,6 +36,10 @@ export class MainView extends AbstractView {
       this.state.loading = false;
       this.state.list = data.docs;
     }
+
+    if (path === 'list' || path === 'loading') {
+      this.render();
+    }
   }
 
   async loadList(q, offset) {
@@ -46,6 +52,7 @@ export class MainView extends AbstractView {
   render() {
     const main = document.createElement('div');
     main.append(new Search(this.state).render());
+    main.append(new CardList(this.appState, this.state).render());
     this.app.innerHTML = '';
     this.app.append(main);
     this.renderHeader();
