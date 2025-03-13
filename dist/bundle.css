@@ -74,6 +74,13 @@
   cursor: pointer;
 }
 
+.card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
 .card_list__loader {
   display: flex;
   align-items: center;

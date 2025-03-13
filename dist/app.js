@@ -1188,6 +1188,51 @@
 	  }
 	}
 
+	class Card extends DivComponent {
+	  constructor(appState, cardState) {
+	    super();
+	    this.appState = appState;
+	    this.cardState = cardState;
+	  }
+
+	  render() {
+	    this.el.classList.add('card');
+	    const existInFavorites = this.appState.favorites.find(
+	      (b) => b.key == this.cardState.key
+	    );
+	    this.el.innerHTML = `
+	<div class="card__image">
+	<img src="https://covers.openlibrary.org/b/olid/${
+    this.cardState.cover_edition_key
+  }-M.jpg" alt="обложка"/>
+	</div>
+  <div class="card__info">
+    <div class="card__tag">
+      ${this.cardState.subject ? this.cardState.subject[0] : 'Не задано'}
+    </div>
+    <div class="card__name">
+      ${this.cardState.title}
+    </div>
+    <div class="card__author">
+      ${
+        this.cardState.author_name ? this.cardState.author_name[0] : 'Не задано'
+      }
+    </div>
+        <div class="card__footer">
+      <button class="button__add ${existInFavorites ? 'button__active ' : ''}">
+        ${
+          existInFavorites
+            ? '<img src="/static/favorites.svg" />'
+            : '<img src="/static/favorites-white.svg" />'
+        }
+      </button>
+    </div>
+  </div>
+	`;
+	    return this.el;
+	  }
+	}
+
 	class CardList extends DivComponent {
 	  constructor(appState, parentState) {
 	    super();
@@ -1201,7 +1246,11 @@
 	      return this.el;
 	    }
 	    this.el.classList.add('card_list');
-	    this.el.innerHTML = `<h1>Найдено книг - ${this.parentState.list.length}</h1>`;
+	    this.el.innerHTML = `<h1>Найдено книг - ${this.parentState.numFound}</h1>`;
+
+	    for (const card of this.parentState.list) {
+	      this.el.append(new Card(this.appState, card).render());
+	    }
 	    return this.el;
 	  }
 	}
@@ -1209,6 +1258,7 @@
 	class MainView extends AbstractView {
 	  state = {
 	    list: [], //список книг
+	    numFound: 0,
 	    loading: false, //флаг загрузки
 	    searchQuery: undefined, //строка поиска
 	    offset: 0, // смещение для пагинации
@@ -1236,6 +1286,8 @@
 	        this.state.offset
 	      );
 	      this.state.loading = false;
+	      console.log(data);
+	      this.state.numFound = data.numFound;
 	      this.state.list = data.docs;
 	    }
 

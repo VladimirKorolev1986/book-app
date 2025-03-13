@@ -7,6 +7,7 @@ import { CardList } from '../../components/card-list/card-list.js';
 export class MainView extends AbstractView {
   state = {
     list: [], //список книг
+    numFound: 0,
     loading: false, //флаг загрузки
     searchQuery: undefined, //строка поиска
     offset: 0, // смещение для пагинации
@@ -34,6 +35,8 @@ export class MainView extends AbstractView {
         this.state.offset
       );
       this.state.loading = false;
+      console.log(data);
+      this.state.numFound = data.numFound;
       this.state.list = data.docs;
     }
 
