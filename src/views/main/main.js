@@ -23,7 +23,7 @@ export class MainView extends AbstractView {
   appStateHook(path) {
     // вызывается при изменении appState
     if (path == 'favorites') {
-      console.log(path);
+      this.render();
     }
   }
 

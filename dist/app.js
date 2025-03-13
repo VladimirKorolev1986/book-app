@@ -1194,6 +1194,15 @@
 	    this.appState = appState;
 	    this.cardState = cardState;
 	  }
+	  #addToFavorites() {
+	    this.appState.favorites.push(this.cardState);
+	  }
+
+	  #deleteFromFavorites() {
+	    this.appState.favorites = this.appState.favorites.filter(
+	      (b) => b.key !== this.cardState.key
+	    );
+	  }
 
 	  render() {
 	    this.el.classList.add('card');
@@ -1219,7 +1228,7 @@
       }
     </div>
         <div class="card__footer">
-      <button class="button__add ${existInFavorites ? 'button__active ' : ''}">
+      <button class="button__add ${existInFavorites ? 'button__active' : ''}">
         ${
           existInFavorites
             ? '<img src="/static/favorites.svg" />'
@@ -1229,6 +1238,15 @@
     </div>
   </div>
 	`;
+	    if (existInFavorites) {
+	      this.el
+	        .querySelector('button')
+	        .addEventListener('click', this.#deleteFromFavorites.bind(this));
+	    } else {
+	      this.el
+	        .querySelector('button')
+	        .addEventListener('click', this.#addToFavorites.bind(this));
+	    }
 	    return this.el;
 	  }
 	}
@@ -1274,7 +1292,7 @@
 	  appStateHook(path) {
 	    // вызывается при изменении appState
 	    if (path == 'favorites') {
-	      console.log(path);
+	      this.render();
 	    }
 	  }
 
